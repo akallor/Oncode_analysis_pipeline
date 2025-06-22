@@ -10,3 +10,6 @@ f) Binding affinity analysis is conducted on all presented immunopeptides based 
 g) Codon usage/translation initiation site prediction for novel orfs/non-canonical immunopeptides.
 h) Finally, similarity to known MHC ligands and epitopes (mined from CEDAR & IEDB databases) is computed.
 i) The final list of peptides based on all the criteria above are prepared and a ranking is done.
+
+How to run the codes (in order):
+conda_install.py --> create_timstof_env.py --> run_timsconvert.py
