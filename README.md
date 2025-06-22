@@ -12,4 +12,4 @@ h) Finally, similarity to known MHC ligands and epitopes (mined from CEDAR & IED
 i) The final list of peptides based on all the criteria above are prepared and a ranking is done.
 
 How to run the codes (in order):
-conda_install.py --> create_timstof_env.py --> run_timsconvert.py
+conda_install.py --> create_timstof_env.py --> run_timsconvert.py --> mzml_quality_check.py
