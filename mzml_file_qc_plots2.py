@@ -1,3 +1,4 @@
+#QC test for mzML files
 import os
 import glob
 import numpy as np
@@ -74,26 +75,70 @@ plt.savefig(os.path.join(PLOT_DIR, 'rt_hist_overlay.png'), dpi=300)
 plt.savefig(os.path.join(PLOT_DIR, 'rt_hist_overlay.pdf'))
 plt.close()
 
-# Boxplots for m/z
-mz_df = pd.DataFrame({name: data['mz'] for name, data in replicate_data.items()})
-mz_df_melt = mz_df.melt(var_name='Replicate', value_name='m/z')
+# Overlayed histograms for intensity
 plt.figure(figsize=(10, 6))
-sns.boxplot(x='Replicate', y='m/z', data=mz_df_melt)
+for name, data in replicate_data.items():
+    # Subsample for plotting if too large
+    intensity_vals = data['intensity']
+    if len(intensity_vals) > 500000:
+        intensity_vals = np.random.choice(intensity_vals, 500000, replace=False)
+    plt.hist(intensity_vals, bins=200, alpha=0.5, label=name, density=True)
+plt.xlabel('Intensity')
+plt.ylabel('Density')
+plt.title('Overlayed Intensity Histograms per Replicate')
+plt.legend()
+plt.tight_layout()
+plt.savefig(os.path.join(PLOT_DIR, 'intensity_hist_overlay.png'), dpi=300)
+plt.savefig(os.path.join(PLOT_DIR, 'intensity_hist_overlay.pdf'))
+plt.close()
+
+# Boxplots for m/z (long format, memory efficient)
+mz_long = []
+for name, data in replicate_data.items():
+    # Subsample if too large for plotting
+    mz_vals = data['mz']
+    if len(mz_vals) > 500000:
+        mz_vals = np.random.choice(mz_vals, 500000, replace=False)
+    mz_long.append(pd.DataFrame({'Replicate': name, 'm/z': mz_vals}))
+mz_long_df = pd.concat(mz_long, ignore_index=True)
+plt.figure(figsize=(10, 6))
+sns.boxplot(x='Replicate', y='m/z', data=mz_long_df, showfliers=False)
 plt.title('m/z Boxplot per Replicate')
 plt.tight_layout()
 plt.savefig(os.path.join(PLOT_DIR, 'mz_boxplot.png'), dpi=300)
 plt.savefig(os.path.join(PLOT_DIR, 'mz_boxplot.pdf'))
 plt.close()
 
-# Boxplots for RT
-rt_df = pd.DataFrame({name: data['rt'] for name, data in replicate_data.items()})
-rt_df_melt = rt_df.melt(var_name='Replicate', value_name='RT')
+# Boxplots for RT (long format, memory efficient)
+rt_long = []
+for name, data in replicate_data.items():
+    rt_vals = data['rt']
+    if len(rt_vals) > 500000:
+        rt_vals = np.random.choice(rt_vals, 500000, replace=False)
+    rt_long.append(pd.DataFrame({'Replicate': name, 'RT': rt_vals}))
+rt_long_df = pd.concat(rt_long, ignore_index=True)
 plt.figure(figsize=(10, 6))
-sns.boxplot(x='Replicate', y='RT', data=rt_df_melt)
+sns.boxplot(x='Replicate', y='RT', data=rt_long_df, showfliers=False)
 plt.title('RT Boxplot per Replicate')
 plt.tight_layout()
 plt.savefig(os.path.join(PLOT_DIR, 'rt_boxplot.png'), dpi=300)
 plt.savefig(os.path.join(PLOT_DIR, 'rt_boxplot.pdf'))
+plt.close()
+
+# Boxplots for intensity (long format, memory efficient)
+intensity_long = []
+for name, data in replicate_data.items():
+    intensity_vals = data['intensity']
+    if len(intensity_vals) > 500000:
+        intensity_vals = np.random.choice(intensity_vals, 500000, replace=False)
+    intensity_long.append(pd.DataFrame({'Replicate': name, 'Intensity': intensity_vals}))
+intensity_long_df = pd.concat(intensity_long, ignore_index=True)
+plt.figure(figsize=(10, 6))
+sns.boxplot(x='Replicate', y='Intensity', data=intensity_long_df, showfliers=False)
+plt.title('Intensity Boxplot per Replicate')
+plt.tight_layout()
+plt.savefig(os.path.join(PLOT_DIR, 'intensity_boxplot.png'), dpi=300)
+plt.savefig(os.path.join(PLOT_DIR, 'intensity_boxplot.pdf'))
 plt.close()
 
 # Barplot for spectra count per replicate
@@ -107,4 +152,4 @@ plt.savefig(os.path.join(PLOT_DIR, 'spectra_count_barplot.png'), dpi=300)
 plt.savefig(os.path.join(PLOT_DIR, 'spectra_count_barplot.pdf'))
 plt.close()
 
-print('All plots saved as PNG (300 dpi) and PDF in:', PLOT_DIR) 
+print('All plots saved as PNG (300 dpi) and PDF in:', PLOT_DIR)
