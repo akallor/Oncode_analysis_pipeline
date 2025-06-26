@@ -1,17 +1,6 @@
 import os
 import glob
 import argparse
-import re
-
-
-def extract_sample_name(filename):
-    # Remove extension and look for 'Rep' or 'rep' followed by a number
-    base = os.path.basename(filename)
-    # Remove .mzML or other extensions
-    base = re.sub(r'\.[^.]+$', '', base)
-    # Remove _RepN or _repN or -RepN or -repN
-    sample = re.sub(r'([_-])?[Rr]ep\d+$', '', base)
-    return sample
 
 
 def main():
@@ -26,22 +15,13 @@ def main():
         print('No mzML files found in the specified directory.')
         return
 
-    # Group files by sample name (excluding replicate info)
-    sample_to_files = {}
-    for f in mzml_files:
-        sample = extract_sample_name(f)
-        sample_to_files.setdefault(sample, []).append(f)
-
-    # Prepare manifest rows
+    # Prepare manifest rows: assign replicate numbers in order
     rows = []
-    for sample, files in sample_to_files.items():
-        # Sort files for consistent replicate assignment
-        files_sorted = sorted(files)
-        for idx, f in enumerate(files_sorted, 1):
-            rows.append([f, 'exp', str(idx), args.data_type])
+    for idx, f in enumerate(mzml_files, 1):
+        rows.append([f, 'exp', str(idx), args.data_type])
 
-    # Write to manifest file
-    manifest_path = f"{args.study_id}_manifest.tsv"
+    # Write to manifest file in the specified directory
+    manifest_path = os.path.join(args.data_dir, f"{args.study_id}_manifest.tsv")
     with open(manifest_path, 'w') as out:
         for row in rows:
             out.write('\t'.join(row) + '\n')
