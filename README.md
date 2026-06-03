@@ -13,3 +13,8 @@ i) The final list of peptides based on all the criteria above are prepared and a
 
 How to run the codes (in order):
 conda_install.py --> create_timstof_env.py --> run_timsconvert.py --> mzml_quality_check.py
+
+The downstream objectives of this pipeline are to build a comprehensive log-odds method for antigen prioritization based on several physicochemical features, including binding affinity as shown below:
+
+
+<img width="475" height="285" alt="image" src="https://github.com/user-attachments/assets/5dca4498-ee94-401a-acbf-05d9998b727e" />
